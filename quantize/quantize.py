@@ -51,7 +51,7 @@ def main():
         subprocess.run(["git", "clone", "https://github.com/ggerganov/llama.cpp", llama_cpp_dir], check=True)
         logger.info("Building llama.cpp via CMake...")
         subprocess.run(["cmake", "-B", "build"], cwd=llama_cpp_dir, check=True)
-        subprocess.run(["cmake", "--build", "build", "--config", "Release", "-j", "--target", "llama-quantize"], cwd=llama_cpp_dir, check=True)
+        subprocess.run(["cmake", "--build", "build", "--config", "Release", "-j", "2", "--target", "llama-quantize"], cwd=llama_cpp_dir, check=True)
         subprocess.run(["pip", "install", "-r", "requirements.txt"], cwd=llama_cpp_dir, check=True)
 
     f16_gguf_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "model.f16.gguf")
