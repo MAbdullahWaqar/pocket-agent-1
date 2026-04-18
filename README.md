@@ -4,7 +4,7 @@ An end-to-end, highly optimized, on-device AI assistant designed strictly for th
 
 ---
 
-## 🏆 Hackathon Constraints & How We Crushed Them
+##  Hackathon Constraints 
 
 Every single hard constraint imposed by the hackathon was meticulously engineered around:
 
@@ -50,9 +50,9 @@ pocket-agent/
 
 ---
 
-## 🧬 Data Generation Strategy (The 1,500+ Pipeline)
+##  Data Generation Strategy (The 1,500+ Pipeline)
 
-To teach a 1.5B model complex structured output, we synthetically generated over **1,500 diverse examples** using a heuristic templating engine. The dataset was rigidly divided into four behavioral slices:
+To teach a 1.5B model complex structured output, I synthetically generated over **1,500 diverse examples** using a heuristic templating engine. The dataset was rigidly divided into four behavioral slices:
 
 1. **Slice A: In-Distribution (40% - ~600 samples)**
    Straightforward, unambiguous single-turn tool calls. The model learned to cleanly extract cities, standard metric/imperial units, and ISO 4217 currency codes into the fixed JSON schema.
@@ -69,19 +69,19 @@ To teach a 1.5B model complex structured output, we synthetically generated over
 
 ---
 
-## 🚀 Training & Fine-Tuning Optimization
+##  Training & Fine-Tuning Optimization
 
 Given the time and hardware constraints (Free Google Colab T4, 16GB VRAM), full fine-tuning was impossible. We leveraged **QLoRA (Quantized Low-Rank Adaptation)**:
 
 - **Base Weights:** Loaded in **4-bit NormalFloat (NF4)** using `bitsandbytes`.
 - **Compute Dtype:** `bfloat16` to prevent gradient underflow and ensure numeric stability.
 - **LoRA Parameters:** `r=16`, `alpha=32`, `dropout=0.05` applied across all critical attention modules (`q_proj`, `v_proj`, `k_proj`, `o_proj`).
-- **Sequence Packing:** Used `packing=True` with `max_length=256`. By packing multiple short prompts into single continuous sequences, we bypassed massive padding overhead.
+- **Sequence Packing:** Used `packing=True` with `max_length=256`. By packing multiple short prompts into single continuous sequences, I bypassed massive padding overhead.
 - **Epochs & Speed:** Reduced to `num_train_epochs=1`, which combined with packing, slashed our training time from 65+ minutes down to roughly **10-15 minutes**.
 
 ---
 
-## 🗜️ Quantization & Hardware Footprint
+##  Quantization & Hardware Footprint
 
 Deploying PyTorch models directly onto mobile CPUs is catastrophically slow. Our solution forces the model into C++ optimized binaries:
 
@@ -89,14 +89,14 @@ Deploying PyTorch models directly onto mobile CPUs is catastrophically slow. Our
 2. **C++ Build:** The script dynamically clones and compiles the `llama.cpp` binary.
 3. **Q4_K_M Quantization:** The model is converted from HuggingFace Safetensors directly to GGUF `Q4_K_M`.
 
-### Resource Consumption (Inference Phase)
-- **CPU Usage:** Multi-threaded execution utilizes ~4 logical cores at peak burst during token generation.
-- **RAM Footprint:** The entire loaded model occupies only **~1.1 GB to 1.3 GB of system memory** (drastically lower than the 6GB+ needed for native FP16).
-- **VRAM:** **0 MB**. The GPU is completely disabled during inference to emulate mobile hardware.
+### Resource Consumption (Inference Phase on Colab CPU)
+- **CPU Utilization:** Idles at **~0%**. During active token generation (inference), the `llama.cpp` engine dynamically scales across available threads, hitting **~85% - 95% CPU utilization** in short, efficient bursts.
+- **RAM Footprint:** The entire loaded GGUF model occupies only **~1.1 GB to 1.3 GB of system memory**. On a standard 13GB Colab instance, this translates to utilizing roughly **8% to 10% of total system RAM** (drastically lower than the 6GB+ needed for native FP16 execution).
+- **VRAM:** **0 MB**. The GPU is completely disabled during inference to prove true offline mobile capability.
 
 ---
 
-## 📊 Evaluation Results (Public Test Set)
+##  Evaluation Results (Public Test Set)
 
 The evaluation script uses the strict Hackathon grading rubric (+1.0 perfect, +0.5 correct tool/wrong arg, 0.0 wrong tool, -0.5 failed refusal).
 
@@ -110,13 +110,13 @@ The evaluation script uses the strict Hackathon grading rubric (+1.0 perfect, +0
 
 ---
 
-## 🔬 Error Analysis & Corrective Measures (+5 Bonus)
+## Error Analysis & Corrective Measures 
 
-During development, we identified and mitigated several distinct failure modes:
+During development, I identified and mitigated several distinct failure modes:
 
 1. **Failure:** Model emits `{"tool": "weather", "args": {"location": "London"}}` but forgets the mandatory `unit` parameter.
    - *Why:* The model over-indexed on extracting entities and ignored schema rigidity.
-   - *Fix:* In Slice D, we injected scenarios where a missing unit resulted in an assistant refusal requesting clarification, forcing the model to respect the schema.
+   - *Fix:* In Slice D, I injected scenarios where a missing unit resulted in an assistant refusal requesting clarification, forcing the model to respect the schema.
 2. **Failure:** Hallucinated tools (e.g., `{"tool": "smart_home", "args": {"action": "lights_on"}}`).
    - *Why:* Instruction-tuned bases try to extrapolate patterns to answer user queries.
    - *Fix:* Added negative examples to Slice C specifically targeting fake tools to reinforce natural language refusals.
@@ -138,7 +138,7 @@ This pipeline was built to be executed on a Google Colab instance, specifically 
 
 ### Execution Steps:
 1. Open the project in VS Code.
-2. Connect to the Colab **T4 GPU** runtime using the Google Colab extension (Select Kernel -> Colab -> Auto Connect).
+2. Connect to the Colab **T4 GPU** runtime using the Google Colab extension (Select Kernel -> Colab -> GPU -> T4.
 3. Open `Pocket_Agent.ipynb`.
 4. Run **Cell 1** to pull the latest codebase via `git clone`.
 5. Execute the pipeline sequentially:
