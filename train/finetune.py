@@ -75,7 +75,7 @@ def main():
         num_train_epochs=1,
         per_device_train_batch_size=4,
         gradient_accumulation_steps=4,
-        optim="paged_adamw_32bit",
+        optim="adamw_torch",
         save_steps=0,
         logging_steps=50,
         learning_rate=2e-4,
