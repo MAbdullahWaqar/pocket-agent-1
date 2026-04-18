@@ -16,6 +16,11 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
+    if not torch.cuda.is_available():
+        logger.error("CRITICAL ERROR: CUDA is not available! You are running on CPU.")
+        logger.error("Please enable T4 GPU in Colab and ensure GPU PyTorch is installed.")
+        import sys; sys.exit(1)
+        
     model_id = "Qwen/Qwen2.5-0.5B-Instruct"
     fallback_model_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
     
@@ -55,7 +60,7 @@ def main():
     model = AutoModelForCausalLM.from_pretrained(
         current_model_id,
         quantization_config=bnb_config,
-        device_map="auto"
+        device_map={"": 0}
     )
     
     model.config.use_cache = False
