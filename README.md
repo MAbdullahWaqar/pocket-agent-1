@@ -89,10 +89,10 @@ Deploying PyTorch models directly onto mobile CPUs is catastrophically slow. Our
 2. **C++ Build:** The script dynamically clones and compiles the `llama.cpp` binary.
 3. **Q4_K_M Quantization:** The model is converted from HuggingFace Safetensors directly to GGUF `Q4_K_M`.
 
-### Resource Consumption (Inference Phase on Colab CPU)
-- **CPU Utilization:** Idles at **~0%**. During active token generation (inference), the `llama.cpp` engine dynamically scales across available threads, hitting **~85% - 95% CPU utilization** in short, efficient bursts.
-- **RAM Footprint:** The entire loaded GGUF model occupies only **~1.1 GB to 1.3 GB of system memory**. On a standard 13GB Colab instance, this translates to utilizing roughly **8% to 10% of total system RAM** (drastically lower than the 6GB+ needed for native FP16 execution).
-- **VRAM:** **0 MB**. The GPU is completely disabled during inference to prove true offline mobile capability.
+### Resource Consumption (Inference Phase)
+- **CPU Usage:** Multi-threaded execution utilizes ~4 logical cores at peak burst during token generation.
+- **RAM Footprint:** The entire loaded model occupies only **~1.1 GB to 1.3 GB of system memory** (drastically lower than the 6GB+ needed for native FP16).
+- **VRAM:** **0 MB**. The GPU is completely disabled during inference to emulate mobile hardware.
 
 ---
 
