@@ -50,16 +50,19 @@ def main():
     dataset = dataset.map(format_chat_template, num_proc=os.cpu_count() or 1)
 
     logger.info(f"Loading Base Model ({current_model_id}) in 4-bit...")
+    compute_dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else torch.float16
+
     bnb_config = BitsAndBytesConfig(
         load_in_4bit=True,
         bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.float16,
+        bnb_4bit_compute_dtype=compute_dtype,
         bnb_4bit_use_double_quant=False
     )
 
     model = AutoModelForCausalLM.from_pretrained(
         current_model_id,
         quantization_config=bnb_config,
+        torch_dtype=compute_dtype,
         device_map={"": 0}
     )
     
@@ -85,8 +88,8 @@ def main():
         logging_steps=50,
         learning_rate=2e-4,
         weight_decay=0.001,
-        fp16=True,
-        bf16=False,
+        fp16=not (torch.cuda.is_available() and torch.cuda.is_bf16_supported()),
+        bf16=torch.cuda.is_available() and torch.cuda.is_bf16_supported(),
         max_grad_norm=0.3,
         warmup_steps=15,
         lr_scheduler_type="cosine",
