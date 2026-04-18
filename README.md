@@ -1,4 +1,4 @@
-# 📱 Pocket-Agent: On-Device LLM for Offline Tool Calling
+#  Pocket-Agent: On-Device LLM for Offline Tool Calling
 
 An end-to-end, highly optimized, on-device AI assistant designed strictly for the **Pocket-Agent Hackathon**. This project fine-tunes a large language model to execute precise, structured JSON tool calls and provide robust natural language refusals for out-of-scope requests—all while operating strictly offline within ultra-constrained hardware environments.
 

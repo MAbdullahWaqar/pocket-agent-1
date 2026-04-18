@@ -49,8 +49,9 @@ def main():
     
     if not os.path.exists(llama_cpp_dir):
         subprocess.run(["git", "clone", "https://github.com/ggerganov/llama.cpp", llama_cpp_dir], check=True)
-        logger.info("Building llama.cpp...")
-        subprocess.run(["make", "llama-quantize"], cwd=llama_cpp_dir, check=True)
+        logger.info("Building llama.cpp via CMake...")
+        subprocess.run(["cmake", "-B", "build"], cwd=llama_cpp_dir, check=True)
+        subprocess.run(["cmake", "--build", "build", "--config", "Release", "-j", "--target", "llama-quantize"], cwd=llama_cpp_dir, check=True)
         subprocess.run(["pip", "install", "-r", "requirements.txt"], cwd=llama_cpp_dir, check=True)
 
     f16_gguf_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "model.f16.gguf")
@@ -72,7 +73,11 @@ def main():
     ], check=True)
 
     logger.info("Quantizing to Q4_K_M...")
-    quantize_bin = os.path.join(llama_cpp_dir, "llama-quantize")
+    quantize_bin = os.path.join(llama_cpp_dir, "build", "bin", "llama-quantize")
+    if not os.path.exists(quantize_bin):
+        quantize_bin = os.path.join(llama_cpp_dir, "build", "llama-quantize")
+    if not os.path.exists(quantize_bin):
+        quantize_bin = os.path.join(llama_cpp_dir, "llama-quantize")
     subprocess.run([
         quantize_bin,
         f16_gguf_path,
