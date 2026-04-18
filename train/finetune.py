@@ -72,7 +72,7 @@ def main():
 
     training_args = SFTConfig(
         output_dir="./results",
-        num_train_epochs=3,
+        num_train_epochs=1,
         per_device_train_batch_size=4,
         gradient_accumulation_steps=4,
         optim="paged_adamw_32bit",
@@ -88,7 +88,7 @@ def main():
         lr_scheduler_type="cosine",
         report_to="none",
         dataset_text_field="text",
-        max_length=512,
+        max_length=256,
         packing=True,
     )
 
