@@ -69,8 +69,6 @@ def main():
         task_type="CAUSAL_LM",
         target_modules=["q_proj", "v_proj", "k_proj", "o_proj"]
     )
-    
-    model = get_peft_model(model, peft_config)
 
     training_args = SFTConfig(
         output_dir="./results",
