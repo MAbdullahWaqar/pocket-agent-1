@@ -10,7 +10,7 @@ from transformers import (
     TrainingArguments
 )
 from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
-from trl import SFTTrainer
+from trl import SFTTrainer, SFTConfig
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -72,7 +72,7 @@ def main():
     
     model = get_peft_model(model, peft_config)
 
-    training_args = TrainingArguments(
+    training_args = SFTConfig(
         output_dir="./results",
         num_train_epochs=3,
         per_device_train_batch_size=4,
@@ -88,18 +88,18 @@ def main():
         warmup_ratio=0.05,
         group_by_length=True,
         lr_scheduler_type="cosine",
-        report_to="none"
+        report_to="none",
+        dataset_text_field="text",
+        max_seq_length=512,
+        packing=True,
     )
 
     trainer = SFTTrainer(
         model=model,
         train_dataset=dataset,
         peft_config=peft_config,
-        dataset_text_field="text",
-        max_seq_length=512,
         tokenizer=tokenizer,
         args=training_args,
-        packing=True,
     )
 
     logger.info("Starting Training...")
