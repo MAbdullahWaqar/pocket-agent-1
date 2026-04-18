@@ -84,7 +84,6 @@ def main():
         bf16=True,
         max_grad_norm=0.3,
         warmup_steps=15,
-        group_by_length=True,
         lr_scheduler_type="cosine",
         report_to="none",
         dataset_text_field="text",
