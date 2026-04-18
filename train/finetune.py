@@ -98,7 +98,7 @@ def main():
         model=model,
         train_dataset=dataset,
         peft_config=peft_config,
-        tokenizer=tokenizer,
+        processing_class=tokenizer,
         args=training_args,
     )
 
