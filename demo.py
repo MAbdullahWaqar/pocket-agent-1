@@ -11,7 +11,7 @@ from inference import run, parse_tool_call
 st.set_page_config(page_title="Pocket-Agent", page_icon="📱", layout="centered")
 
 st.title("📱 Pocket-Agent")
-st.markdown("Offline mobile assistant running on Qwen2.5-1.5B-Instruct (GGUF INT4).")
+st.markdown("Offline mobile assistant running on Qwen2.5-0.5B-Instruct (GGUF INT4).")
 
 # Initialize chat history
 if "messages" not in st.session_state:

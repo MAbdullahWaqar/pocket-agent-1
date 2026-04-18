@@ -9,7 +9,7 @@ An end-to-end, highly optimized, on-device AI assistant designed strictly for th
 Every single hard constraint imposed by the hackathon was meticulously engineered around:
 
 1. **Base Model ≤ 2B Parameters:** 
-   *Met.* We utilized `Qwen/Qwen2.5-1.5B-Instruct` (1.5 Billion parameters), which offers state-of-the-art multilingual and instruction-following capabilities at an ultra-small footprint.
+   *Met.* We utilized `Qwen/Qwen2.5-0.5B-Instruct` (0.5 Billion parameters), which offers state-of-the-art multilingual and instruction-following capabilities at an ultra-small footprint.
 2. **Final Quantized Model ≤ 500 MB (Target ≤ 250 MB):** 
    *Met.* The model is merged and heavily compressed down to **GGUF Q4_K_M** (4-bit quantization), yielding an incredibly dense binary that sits comfortably beneath the 500 MB threshold, allowing it to easily fit in the RAM of modern mobile devices.
 3. **Mean Inference Latency ≤ 200 ms/turn on CPU:** 
@@ -23,7 +23,7 @@ Every single hard constraint imposed by the hackathon was meticulously engineere
 
 ## 🛠️ Tech Stack & System Architecture
 
-- **Base Model:** `Qwen2.5-1.5B-Instruct`
+- **Base Model:** `Qwen2.5-0.5B-Instruct`
 - **Training Engine:** PyTorch, `trl` (SFTTrainer), `peft` (QLoRA), `bitsandbytes` (4-bit NF4)
 - **Quantization Pipeline:** `llama.cpp` (GGUF, Q4_K_M compression)
 - **Inference Runtime:** `llama-cpp-python` (C++ backend for blistering fast CPU execution)
@@ -52,7 +52,7 @@ pocket-agent/
 
 ##  Data Generation Strategy (The 1,500+ Pipeline)
 
-To teach a 1.5B model complex structured output, I synthetically generated over **1,500 diverse examples** using a heuristic templating engine. The dataset was rigidly divided into four behavioral slices:
+To teach a 0.5B model complex structured output, I synthetically generated over **1,500 diverse examples** using a heuristic templating engine. The dataset was rigidly divided into four behavioral slices:
 
 1. **Slice A: In-Distribution (40% - ~600 samples)**
    Straightforward, unambiguous single-turn tool calls. The model learned to cleanly extract cities, standard metric/imperial units, and ISO 4217 currency codes into the fixed JSON schema.

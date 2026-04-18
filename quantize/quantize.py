@@ -10,7 +10,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    base_model_id = "Qwen/Qwen2.5-1.5B-Instruct"
+    base_model_id = "Qwen/Qwen2.5-0.5B-Instruct"
     adapter_dir = os.path.join(os.path.dirname(__file__), "..", "artifacts", "adapter")
     merged_dir = os.path.join(os.path.dirname(__file__), "..", "artifacts", "merged_model")
     final_gguf_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "model.Q4_K_M.gguf")
@@ -52,7 +52,7 @@ def main():
         logger.info("Building llama.cpp via CMake...")
         subprocess.run(["cmake", "-B", "build"], cwd=llama_cpp_dir, check=True)
         subprocess.run(["cmake", "--build", "build", "--config", "Release", "-j", "2", "--target", "llama-quantize"], cwd=llama_cpp_dir, check=True)
-        subprocess.run(["pip", "install", "-r", "requirements.txt"], cwd=llama_cpp_dir, check=True)
+        subprocess.run(["pip", "install", "gguf", "protobuf"], cwd=llama_cpp_dir, check=True)
 
     f16_gguf_path = os.path.join(os.path.dirname(__file__), "..", "artifacts", "model.f16.gguf")
     

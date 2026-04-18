@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 def main():
-    model_id = "Qwen/Qwen2.5-1.5B-Instruct"
+    model_id = "Qwen/Qwen2.5-0.5B-Instruct"
     fallback_model_id = "HuggingFaceTB/SmolLM2-1.7B-Instruct"
     
     data_path = os.path.join(os.path.dirname(__file__), "..", "data", "train.jsonl")
